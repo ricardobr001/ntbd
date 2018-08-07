@@ -4,6 +4,7 @@ import random
 import names
 import json
 import sys
+import re
 
 def insert_string(pos):
     return FILENAME[:pos] + '-mongo' + FILENAME[pos:], FILENAME[:pos] + '-redis' + FILENAME[pos:]
@@ -31,6 +32,7 @@ for i in range(1,VALUES):
     obj = {}
     obj['nome'] = names.get_full_name().encode('utf-8')
     obj['cpf'] = gen.cpf_with_punctuation()
+    cpf_key = ''.join(re.split('\.|-', obj['cpf']))
     obj['carrinho'] = []
     carrinho = {}
 
@@ -41,7 +43,7 @@ for i in range(1,VALUES):
 
         obj['carrinho'].append(carrinho)
     
-    print >> f_redis, 'SET ' + str(i) + ' \'' + json.dumps(obj) + '\''
+    print >> f_redis, 'SET ' + cpf_key + ' \'' + json.dumps(obj) + '\''
     print >> f_mongo, '\t' + json.dumps(obj)
 
 print >> f_mongo, ']'
