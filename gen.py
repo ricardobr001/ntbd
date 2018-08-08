@@ -7,8 +7,26 @@ import sys
 import re
 
 def insert_string(pos):
-    return FILENAME[:pos] + '-mongo' + FILENAME[pos:], FILENAME[:pos] + '-redis' + FILENAME[pos:]
+    return FILENAME[:pos] + '-mongo' + FILENAME[pos:], FILENAME[:pos] + '-redis' + FILENAME[pos:], FILENAME[:pos] + '-cassandra.csv'
 
+def cassandra_table():
+    string = ''
+
+    for i in range(1,3):        
+        string += 'produto_' + str(i) + '|quantidade_' + str(i) + '|produto_' + str(i) + '|'
+
+    string += 'nome|cpf'
+    return string
+
+def cassandra_register(obj):
+    string = ''
+
+    for i in obj['carrinho']:
+        string += i['produto'] + '|' + str(i['quantidade']) + '|' + str(i['preco']) + '|'
+    
+    string += obj['nome'] + '|'
+    string += obj['cpf']
+    return string
 
 if len(sys.argv) != 3:
     print 'usage:'
@@ -22,13 +40,16 @@ produtos = [ 'geladeira', 'fogao', 'radio', 'laptop', 'celular',
 'televisao', 'ventilador', 'ar condicionado', 'maquina de lavar'
 ]
 
-file_mongo, file_redis = insert_string(FILENAME.find('.txt'))
+file_mongo, file_redis, file_cassandra = insert_string(FILENAME.find('.txt'))
 
 f_redis = open(file_redis, 'w')
 f_mongo = open(file_mongo, 'w')
-print >> f_mongo, '['
+f_cassandra = open(file_cassandra, 'w')
 
-for i in range(1,VALUES):
+print >> f_mongo, '['
+print >> f_cassandra, cassandra_table()
+
+for i in range(0,VALUES):
     obj = {}
     obj['nome'] = names.get_full_name().encode('utf-8')
     obj['cpf'] = gen.cpf_with_punctuation()
@@ -45,5 +66,6 @@ for i in range(1,VALUES):
     
     print >> f_redis, 'SET ' + cpf_key + ' \'' + json.dumps(obj) + '\''
     print >> f_mongo, '\t' + json.dumps(obj)
+    print >> f_cassandra, cassandra_register(obj)
 
 print >> f_mongo, ']'
