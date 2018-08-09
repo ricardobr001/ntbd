@@ -31,7 +31,7 @@ for i in cpfs:
     for j in res:
         print j[0], j[1], round(j[2], 2), round(j[3], 2), j[4], j[5], j[6], j[7]
 
-print '\n#####\nTempo cassandra: ' + str(round(time.time() - start, 2)) + 's'
+print '\n#####\nTempo cassandra: ' + str(time.time() - start) + 's'
 
 r = redis.StrictRedis(host='localhost', port=6379, db=0) # Conecta com o redis
 start = time.time() # Inicializa o contador de tempo
@@ -41,4 +41,4 @@ for i in cpfs:
     res = r.get(''.join(re.split('\.|-', i)))
     print json.dumps(json.loads(res), indent=4)
 
-print '\n#####\nTempo redis: ' + str(round(time.time() - start, 2)) + 's'
+print '\n#####\nTempo redis: ' + str(time.time() - start) + 's'
