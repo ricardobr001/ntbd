@@ -18,11 +18,12 @@ cpfs = [
     '847.774.492-03'
 ]
 
-cluster = Cluster(['127.0.0.1'])
-session = cluster.connect('ntbd')
+cluster = Cluster(['127.0.0.1']) # Conecta no cluster do cassandra
+session = cluster.connect('ntbd') # Seleciona o keyspace
 
-start = time.time()
+start = time.time() # Inicializa o contador de tempo
 
+# Querys cassandra
 for i in cpfs:
     query = 'SELECT * FROM compras WHERE cpf = \'' + i + '\';'
     res = session.execute(query)
@@ -32,10 +33,10 @@ for i in cpfs:
 
 print '\n#####\nTempo cassandra: ' + str(round(time.time() - start, 2)) + 's'
 
-r = redis.StrictRedis(host='localhost', port=6379, db=0)
+r = redis.StrictRedis(host='localhost', port=6379, db=0) # Conecta com o redis
+start = time.time() # Inicializa o contador de tempo
 
-start = time.time()
-
+# Query redis
 for i in cpfs:
     res = r.get(''.join(re.split('\.|-', i)))
     print json.dumps(json.loads(res), indent=4)
