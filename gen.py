@@ -63,9 +63,15 @@ for i in range(0,VALUES):
         carrinho['preco'] = round(random.uniform(200, 1000),2)
 
         obj['carrinho'].append(carrinho)
+        carrinho = {}
     
     print >> f_redis, 'SET ' + cpf_key + ' \'' + json.dumps(obj) + '\''
-    print >> f_mongo, '\t' + json.dumps(obj)
+
+    if i + 1 == VALUES:
+        print >> f_mongo, '\t' + json.dumps(obj)
+    else:
+        print >> f_mongo, '\t' + json.dumps(obj) + ','
+
     print >> f_cassandra, cassandra_register(obj)
 
 print >> f_mongo, ']'

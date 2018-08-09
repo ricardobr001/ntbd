@@ -26,7 +26,7 @@ coll = db.benchmark #benchmark is the desired <collection>
 
 start = time.time() # Inicializa o contador de tempo
 
-# Querys cassandra
+# Querys Mongo
 for cpf in array_cpfs:
     result = coll.find_one({"cpf":"\"" + cpf + "\""})
 
